@@ -1,7 +1,8 @@
 import customtkinter as ctk
 import tkinter as tk
 import random
-from tkinter import messagebox
+from tkinter import messagebox 
+
 
 class App (ctk.CTk):
     def __init__(self):
@@ -36,7 +37,7 @@ class App (ctk.CTk):
 
             #Add rand numbers for the inner loop
             for j in range(5):
-                self.listbox.insert("end", random.randint(0, 100))
+                self.listbox.insert("end", random.randint(0, 5))
 
         self.bingo_frame = ctk.CTkFrame(self.list_frame, fg_color="transparent")
         self.bingo_frame.pack(side = "top", fill = "x", expand = False)
@@ -61,15 +62,49 @@ class App (ctk.CTk):
 
 
     def bingo_timer(self): # chooses bingo number and updates list frame accordingly
-        self.ran_num = random.randint(0, 100)
+        self.ran_num = random.randint(0, 5)
         self.bingo.configure(text = self.ran_num)
         self.history_list.insert("end", self.ran_num, )
-        self.after(10000, self.bingo_timer)
+        self.timer_id = self.after(10000, self.bingo_timer)
+        self.check_bingo(None)
 
     def check_bingo(self, event):
-        
-        return
-        
+        won = False
+        called_numbers = self.history_list.get(0, "end")
+
+        def is_valid(col_idex, row_index):
+            listbox = self.columns[col_idex]
+            is_selected = row_index in listbox.curselection()
+            number_val = listbox.get(row_index)
+            return is_selected and (number_val in called_numbers)
+    
+        #check horizontal and vertical
+        for i in range (5):
+            if all(is_valid(i, row) for row in range(5)):
+                won = True
+            if all (is_valid(col, i) for col in range(5)):
+                won = True
+
+        #check diagonal
+        if all(is_valid(i, i) for i in range(5)):
+            won = True
+        if all(is_valid(i, 4-i) for i in range(5)):
+            won = True
+
+
+        if won == True:
+            messagebox.showinfo("Message", "BINGO! You Have Won!")
+
+            for listbox in self.columns:
+                listbox.delete(0, "end")
+                for j in range(5):
+                    listbox.insert("end", random.randint(0,5))
+
+            self.history_list.delete(0, "end")
+            self.after_cancel(self.timer_id)
+            self.bingo_timer
+
+      
 app = App()
 app.mainloop()
 
