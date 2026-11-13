@@ -37,7 +37,7 @@ class App (ctk.CTk):
 
             #Add rand numbers for the inner loop
             for j in range(5):
-                self.listbox.insert("end", random.randint(0, 5))
+                self.listbox.insert("end", random.randint(0, 100))
 
         self.bingo_frame = ctk.CTkFrame(self.list_frame, fg_color="transparent")
         self.bingo_frame.pack(side = "top", fill = "x", expand = False)
@@ -62,7 +62,7 @@ class App (ctk.CTk):
 
 
     def bingo_timer(self): # chooses bingo number and updates list frame accordingly
-        self.ran_num = random.randint(0, 5)
+        self.ran_num = random.randint(0, 100)
         self.bingo.configure(text = self.ran_num)
         self.history_list.insert("end", self.ran_num, )
         self.timer_id = self.after(10000, self.bingo_timer)
@@ -98,7 +98,7 @@ class App (ctk.CTk):
             for listbox in self.columns:
                 listbox.delete(0, "end")
                 for j in range(5):
-                    listbox.insert("end", random.randint(0,5))
+                    listbox.insert("end", random.randint(0,100))
 
             self.history_list.delete(0, "end")
             self.after_cancel(self.timer_id)
